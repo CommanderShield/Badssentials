@@ -46,7 +46,7 @@ Config = {
 		['AOP & PeaceTime'] = {
 			x = .165,
 			y = .97,
-			display = "~p~Current AOP: {CURRENT_AOP} ~p~| ~w~PeaceTime: {PEACETIME_STATUS}",
+			display = "~p~Current AOP: {CURRENT_AOP} ~p~| ~w~Priority: {PRIORITY_STATUS}",
 			textScale = .4,
 			enabled = true
 		}

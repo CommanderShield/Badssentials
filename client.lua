@@ -96,17 +96,35 @@ function getPostalCoords(postal)
 	end
 	return nil;
 end
+
+local cooldown = 0
+local ispriority = false
+local ishold = false
+
+RegisterCommand("resetpcd", function()
+	if IsPlayerAceAllowed(src, "Badssentials.PeaceTime") then
+	    TriggerServerEvent("cancelcooldown")
+	end
+end, false)
+
+RegisterNetEvent('UpdateCooldown')
+AddEventHandler('UpdateCooldown', function(newCooldown)
+    cooldown = newCooldown
+end)
+
+RegisterNetEvent('UpdatePriority')
+AddEventHandler('UpdatePriority', function(newispriority)
+    ispriority = newispriority
+end)
+
+RegisterNetEvent('UpdateHold')
+AddEventHandler('UpdateHold', function(newishold)
+    ishold = newishold
+end)
+
 Citizen.CreateThread(function()
 	while true do 
 		Wait(0);
-		if peacetime then 
-			if IsControlPressed(0, 106) then
-                ShowInfo("~r~Peacetime is enabled. ~n~~s~You can not shoot.")
-            end
-            SetPlayerCanDoDriveBy(player, false)
-            DisablePlayerFiring(player, true)
-            DisableControlAction(0, 140) -- Melee R
-		end
 		local pos = GetEntityCoords(PlayerPedId())
 		local playerX, playerY = table.unpack(pos)
 		local ndm = -1 -- nearest distance magnitude
@@ -154,11 +172,15 @@ Citizen.CreateThread(function()
 				disp = disp:gsub("{US_MONTH}", currentMonth);
 				disp = disp:gsub("{US_YEAR}", currentYear);
 				disp = disp:gsub("{CURRENT_AOP}", currentAOP);
-				if (disp:find("{PEACETIME_STATUS}")) then 
-					if peacetime then 
-						disp = disp:gsub("{PEACETIME_STATUS}", "~g~Enabled")
-					else 
-						disp = disp:gsub("{PEACETIME_STATUS}", "~r~Disabled")
+				if (disp:find("{PRIORITY_STATUS}")) then 
+					if ishold == true then
+						disp = disp:gsub("{PRIORITY_STATUS}", "~b~Priorities Are On Hold")
+					elseif cooldown == 0 then 
+						disp = disp:gsub("{PRIORITY_STATUS}", "~g~Available")
+					elseif ispriority == true then 
+						disp = disp:gsub("{PRIORITY_STATUS}", "~g~Priority In Progress")
+					elseif ispriority == false then 
+						disp = disp:gsub("{PRIORITY_STATUS}", "~r~".. cooldown .." ~w~Mins")
 					end
 				end
 				local scale = v.textScale;

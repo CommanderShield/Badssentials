@@ -47,31 +47,71 @@ RegisterCommand("aop", function(source, args, rawCommand)
   end
 end)
 
+RegisterCommand("cooldown", function()
+    TriggerEvent("cooldownt")
+end, false)
 
-RegisterCommand("peacetime", function(source, args, rawCommand)
-  local src = source;
-  if IsPlayerAceAllowed(src, "Badssentials.PeaceTime") then
-    peacetime = not peacetime;
-    TriggerClientEvent('Badssentials:SetPT', -1, peacetime);
-    if peacetime then 
-      sendMsg(src, "You have set PeaceTime to ^2ON"); 
-    else 
-      sendMsg(src, "You have set PeaceTime to ^1OFF");
+RegisterCommand("priority", function()
+	TriggerEvent('isPriority')
+end, false)
+
+RegisterCommand("onhold", function()
+    if IsPlayerAceAllowed(src, "Badssentials.Priority") then
+	    TriggerEvent('isOnHold')
     end
-  end
+end, false)
+
+RegisterNetEvent('isPriority')
+AddEventHandler('isPriority', function()
+	ispriority = true
+	Citizen.Wait(1)
+	TriggerClientEvent('UpdatePriority', -1, ispriority)
+	TriggerClientEvent('chatMessage', -1, "WARNING", {255, 0, 0}, "^1A priority call is in progress. Please do not interfere, otherwise you will be ^1kicked. ^7All calls are on ^3hold ^7until this one concludes.")
 end)
-RegisterCommand("pt", function(source, args, rawCommand)
-  local src = source;
-  if IsPlayerAceAllowed(src, "Badssentials.PeaceTime") then
-    peacetime = not peacetime;
-    TriggerClientEvent('Badssentials:SetPT', -1, peacetime);
-    if peacetime then 
-      sendMsg(src, "You have set PeaceTime to ^2ON"); 
-    else 
-      sendMsg(src, "You have set PeaceTime to ^1OFF");
-    end
-  end
+
+RegisterNetEvent('isOnHold')
+AddEventHandler('isOnHold', function()
+	ishold = true
+	Citizen.Wait(1)
+	TriggerClientEvent('UpdateHold', -1, ishold)
 end)
+
+RegisterNetEvent("cooldownt")
+AddEventHandler("cooldownt", function()
+	if ispriority == true then
+		ispriority = false
+		TriggerClientEvent('UpdatePriority', -1, ispriority)
+	end
+	Citizen.Wait(1)
+	if ishold == true then
+		ishold = false
+		TriggerClientEvent('UpdateHold', -1, ishold)
+	end
+	Citizen.Wait(1)
+	if cooldown == 0 then
+		cooldown = 0
+		cooldown = cooldown + 21
+		TriggerClientEvent('chatMessage', -1, "WARNING", {255, 0, 0}, "^1A priority call was just conducted. ^3All civilians must wait 20 minutes before conducting another one. ^7Failure to abide by this rule will lead to you being ^1kicked.")
+		while cooldown > 0 do
+			cooldown = cooldown - 1
+			TriggerClientEvent('UpdateCooldown', -1, cooldown)
+			Citizen.Wait(60000)
+		end
+	elseif cooldown ~= 0 then
+		CancelEvent()
+	end
+end)
+
+RegisterNetEvent("cancelcooldown")
+AddEventHandler("cancelcooldown", function()
+	Citizen.Wait(1)
+	while cooldown > 0 do
+		cooldown = cooldown - 1
+		TriggerClientEvent('UpdateCooldown', -1, cooldown)
+		Citizen.Wait(100)
+	end	
+end)
+
 function split(source, sep)
     local result, i = {}, 1
     while true do
