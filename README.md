@@ -1,6 +1,10 @@
 # Badssentials
 ## What is it?
 Badssentials is essentially the most essential script you need. I saw multiple scripts split up and never saw a single script like this. I figured, I might as well make one, so I did. Badssentials includes AOP, PeaceTime, postal waypointing, and configurable placeholder watermarks! The amount of possibilities is endless with this script! Make sure you take a look at `Screenshots` to see what you can make with this!
+
+## What is this fork?
+This fork is the attempt to change the Peacetime script in Badssentials to a priority cooldown script.
+
 ## Screenshots
 
 ![](https://i.gyazo.com/07b89a6d03ac42f4cf496265d1e55c4f.png)
